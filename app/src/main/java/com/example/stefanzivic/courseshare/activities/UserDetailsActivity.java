@@ -20,6 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 public class UserDetailsActivity extends AppCompatActivity {
 
@@ -69,6 +70,7 @@ public class UserDetailsActivity extends AppCompatActivity {
                         //StorageReference ref = storage.getReference().child(user.getPicture());
 
                         //Glide.with(UserDetailsActivity.this).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
+                        Picasso.with(UserDetailsActivity.this).load(user.getPicture()).into(ivPicture);
                     }
                     else {
                         ivPicture.setImageResource(0);

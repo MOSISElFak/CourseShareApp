@@ -12,6 +12,7 @@ import com.example.stefanzivic.courseshare.R;
 //import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 /**
  * Created by Ivan on 7/3/2017.
@@ -71,6 +72,7 @@ public class LectureViewHolder extends RecyclerView.ViewHolder{
             //StorageReference ref = storage.getReference().child(picture);
 
             //Glide.with(view.getContext()).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
+            Picasso.with(view.getContext()).load(picture).into(ivPicture);
         }
         else {
             ivPicture.setImageResource(0);
