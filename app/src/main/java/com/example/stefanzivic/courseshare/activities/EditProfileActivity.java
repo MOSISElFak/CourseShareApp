@@ -10,14 +10,17 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.bumptech.glide.Glide;
 import com.example.stefanzivic.courseshare.R;
 import com.example.stefanzivic.courseshare.model.User;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -97,11 +100,11 @@ public class EditProfileActivity extends AppCompatActivity {
                     }
 
                     if (user.getPicture() != null) {
-                        //FirebaseStorage storage = FirebaseStorage.getInstance();
-                        //StorageReference ref = storage.getReference().child(user.getPicture());
+                        FirebaseStorage storage = FirebaseStorage.getInstance();
+                        StorageReference ref = storage.getReference().child(user.getPicture());
 
-                        //Glide.with(UserDetailsActivity.this).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
-                        Picasso.with(EditProfileActivity.this).load(user.getPicture()).into(ivPicture);
+                        Glide.with(EditProfileActivity.this).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
+                        //Picasso.with(EditProfileActivity.this).load(user.getPicture()).into(ivPicture);
                     }
                     else {
                         ivPicture.setImageResource(0);

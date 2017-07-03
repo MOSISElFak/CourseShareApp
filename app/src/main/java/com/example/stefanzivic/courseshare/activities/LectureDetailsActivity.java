@@ -10,16 +10,17 @@ import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 //import com.bumptech.glide.Glide;
+import com.bumptech.glide.Glide;
 import com.example.stefanzivic.courseshare.R;
 import com.example.stefanzivic.courseshare.model.Lecture;
 //import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 public class LectureDetailsActivity extends AppCompatActivity {
 
@@ -65,11 +66,11 @@ public class LectureDetailsActivity extends AppCompatActivity {
                     }
 
                     if (lecture.getPicture() != null) {
-                        //FirebaseStorage storage = FirebaseStorage.getInstance();
-                        //StorageReference ref = storage.getReference().child(lecture.getPicture());
+                        FirebaseStorage storage = FirebaseStorage.getInstance();
+                        StorageReference ref = storage.getReference().child(lecture.getPicture());
 
-                        //Glide.with(LectureDetailsActivity.this).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
-                        Picasso.with(LectureDetailsActivity.this).load(lecture.getPicture()).into(ivPicture);
+                        Glide.with(LectureDetailsActivity.this).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
+                        //Picasso.with(LectureDetailsActivity.this).load(lecture.getPicture()).into(ivPicture);
                     }
                     else {
                         ivPicture.setImageResource(0);
