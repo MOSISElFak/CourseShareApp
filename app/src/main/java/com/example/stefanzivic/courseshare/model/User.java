@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class User {
 
+    private String id;
     private String username;
     private String email;
     private String name;
@@ -107,5 +108,13 @@ public class User {
 
     public void set_myPastLectures(Map<String, Boolean> _myPastLectures) {
         this._myPastLectures = _myPastLectures;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
