@@ -5,5 +5,5 @@ package com.example.stefanzivic.courseshare.adapters;
  */
 
 public interface OnUserClickListener {
-    void onUserClick(String user);
+    void onUserClick(String userId);
 }
