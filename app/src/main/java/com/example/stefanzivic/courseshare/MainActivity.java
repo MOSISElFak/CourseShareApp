@@ -2,6 +2,7 @@ package com.example.stefanzivic.courseshare;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
@@ -49,16 +50,15 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        textViewEmail = (TextView)findViewById(R.id.textViewEmail);
+      //  textViewEmail = (TextView)findViewById(R.id.textViewEmail);
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-        textViewEmail.setText(currentUser.getEmail().toString());
+        //textViewEmail.setText(currentUser.getEmail().toString());
 
+        recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -109,11 +109,43 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         if(id == R.id.all_lectures_item) {
             //recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+            //recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+            FirebaseDatabase.getInstance().getReference("lectures").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    List<Lecture> lectures = new ArrayList<Lecture>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Lecture lecture = snapshot.getValue(Lecture.class);
+                        lectures.add(lecture);
+                    }
+                    recyclerView.setAdapter(new RecyclerLectureAdapter(lectures, MainActivity.this));
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         else if (id==R.id.all_teachers_item) {
             //recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            recyclerView.setAdapter(new FirebaseUserAdapter(FirebaseDatabase.getInstance().getReference("users"), MainActivity.this));
+            FirebaseDatabase.getInstance().getReference("users").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    List<User> users = new ArrayList<User>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        User user = snapshot.getValue(User.class);
+                        users.add(user);
+                    }
+                    recyclerView.setAdapter(new RecyclerUserAdapter(users, MainActivity.this));
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+            //recyclerView.setAdapter(new FirebaseUserAdapter(FirebaseDatabase.getInstance().getReference("users"), MainActivity.this));
         }
         else if(id == R.id.favourite_teachers_item) {
             FirebaseDatabase.getInstance().getReference("users").addValueEventListener(new ValueEventListener() {

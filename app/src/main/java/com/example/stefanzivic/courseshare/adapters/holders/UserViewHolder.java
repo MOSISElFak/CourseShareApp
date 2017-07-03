@@ -8,9 +8,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.bumptech.glide.Glide;
+//import com.bumptech.glide.Glide;
 import com.example.stefanzivic.courseshare.R;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
+//import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
@@ -68,10 +68,10 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
 
     public void setPicture(String picture, String name) {
         if (picture != null) {
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference ref = storage.getReference().child(picture);
+            //FirebaseStorage storage = FirebaseStorage.getInstance();
+            //StorageReference ref = storage.getReference().child(picture);
 
-            Glide.with(view.getContext()).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
+            //Glide.with(view.getContext()).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
         }
         else {
             ivPicture.setImageResource(0);
