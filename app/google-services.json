@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "566807387116",
+    "firebase_url": "https://courseshare-fd4f7.firebaseio.com",
+    "project_id": "courseshare-fd4f7",
+    "storage_bucket": "courseshare-fd4f7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:566807387116:android:3adba131f908136a",
+        "android_client_info": {
+          "package_name": "com.example.stefanzivic.courseshare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "566807387116-d8e30phf81pm3id56ncu5h5e2bm6hj28.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.stefanzivic.courseshare",
+            "certificate_hash": "1bf1fa9e45836e9951b4d26422813c82a58e0189"
+          }
+        },
+        {
+          "client_id": "566807387116-65i38d54cin4klcgptc41bokfvp8d9fe.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCD54slyTMblYWyT23a57uq1-xfwWNBu7g"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "566807387116-65i38d54cin4klcgptc41bokfvp8d9fe.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
