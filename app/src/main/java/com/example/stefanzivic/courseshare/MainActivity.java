@@ -2,6 +2,7 @@ package com.example.stefanzivic.courseshare;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -39,9 +40,14 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, OnLectureClickListener, OnUserClickListener {
+
+    public static final String TYPE_EXTRA = "type";
+    public static final String USER_ID_EXTRA = "userId";
 
     TextView textViewEmail;
     RecyclerView recyclerView;
@@ -68,6 +74,14 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        //handle intents
+
+        int type = getIntent().getIntExtra(TYPE_EXTRA, -1);
+        String userId = getIntent().getStringExtra(USER_ID_EXTRA);
+        decideWhatToShow(type, userId);
+
     }
 
     @Override
@@ -202,5 +216,68 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, LectureDetailsActivity.class);
         intent.putExtra(LectureDetailsActivity.LECTURE_ID_EXTRA, lectureId);
         startActivity(intent);
+    }
+
+    public void decideWhatToShow(final int type, String userId) {
+
+        if (type == -1) {
+            recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+        }
+        else {
+            if (userId != null) {
+                FirebaseDatabase.getInstance().getReference("users").child(userId).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        if (user != null) {
+                            final Map<String, Boolean> userLectures;
+                            if (type == 1) { //future lectures
+                                userLectures = user.get_myLectures();
+                            }
+                            else if (type == 2) {
+                                userLectures = user.get_myPastLectures();
+                            }
+                            else {
+                                userLectures = null;
+                            }
+                            if (userLectures != null) {
+                                FirebaseDatabase.getInstance().getReference("lectures").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        List<Lecture> lectureList  = new ArrayList<Lecture>();
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            if (userLectures.containsKey(snapshot.getKey())) {
+                                                Lecture lecture = snapshot.getValue(Lecture.class);
+                                                if (lecture != null) {
+                                                    lectureList.add(lecture);
+                                                }
+                                            }
+                                        }
+                                        recyclerView.setAdapter(new RecyclerLectureAdapter(lectureList, MainActivity.this));
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                            else {
+                                recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+                            }
+
+                        } else {
+                            recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        }
+
     }
 }

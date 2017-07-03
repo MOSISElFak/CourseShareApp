@@ -1,8 +1,10 @@
 package com.example.stefanzivic.courseshare.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 //import com.bumptech.glide.Glide;
 import com.bumptech.glide.Glide;
+import com.example.stefanzivic.courseshare.MainActivity;
 import com.example.stefanzivic.courseshare.R;
 import com.example.stefanzivic.courseshare.model.Lecture;
 import com.example.stefanzivic.courseshare.model.User;
@@ -31,7 +34,10 @@ public class UserDetailsActivity extends AppCompatActivity {
     private ImageView ivPicture;
     private TextView tvName;
     private TextView tvInfo;
-    private Button bViewTrainer;
+
+    private Button bFutureLectures;
+    private Button bPastLectures;
+    private Button bAttendedLectures;
 
     private User user;
 
@@ -40,11 +46,41 @@ public class UserDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lecture_details);
 
-        tvName = (TextView) findViewById(R.id.activity_lecture_details_name);
-        tvInfo = (TextView) findViewById(R.id.activity_lecture_details_description);
-        ivPicture = (ImageView) findViewById(R.id.activity_lecture_details_picture);
+        tvName = (TextView) findViewById(R.id.activity_user_details_name);
+        tvInfo = (TextView) findViewById(R.id.activity_user_details_description);
+        ivPicture = (ImageView) findViewById(R.id.activity_user_details_picture);
+
+        bFutureLectures = (Button) findViewById(R.id.activity_user_details_future_lectures_button);
+        bPastLectures = (Button) findViewById(R.id.activity_user_details_past_lectures_button);
+        bAttendedLectures = (Button) findViewById(R.id.activity_user_details_attended_lectures_button);
 
         userId = getIntent().getStringExtra(USER_ID_EXTRA);
+
+        bFutureLectures.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserDetailsActivity.this, MainActivity.class);
+                intent.putExtra(MainActivity.TYPE_EXTRA, 1);
+                intent.putExtra(MainActivity.USER_ID_EXTRA, user.getId());
+            }
+        });
+
+        bPastLectures.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(UserDetailsActivity.this, MainActivity.class);
+                intent.putExtra(MainActivity.TYPE_EXTRA, 2);
+                intent.putExtra(MainActivity.USER_ID_EXTRA, user.getId());
+            }
+        });
+
+        bAttendedLectures.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(UserDetailsActivity.this, "Ovo treba uraditi", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         FirebaseDatabase.getInstance().getReference("users").child(userId).addValueEventListener(new ValueEventListener() {
             @Override

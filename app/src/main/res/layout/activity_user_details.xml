@@ -6,43 +6,68 @@
     android:layout_height="match_parent"
     tools:context="com.example.stefanzivic.courseshare.activities.UserDetailsActivity">
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <ImageView
-            android:id="@+id/activity_user_details_picture"
-            android:layout_width="180dp"
-            android:layout_height="180dp"
-            android:layout_gravity="center_horizontal"/>
-
-        <TextView
-            android:id="@+id/activity_user_details_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:gravity="center"/>
+        android:layout_height="match_parent">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/activity_user_details_picture"
+                android:layout_width="180dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center_horizontal"/>
 
             <TextView
+                android:id="@+id/activity_user_details_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:gravity="center"/>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textStyle="italic"
-                android:text="Description:"/>
+                android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/activity_user_details_description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="italic"
+                    android:text="Description:"/>
 
+                <TextView
+                    android:id="@+id/activity_user_details_description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/activity_user_details_future_lectures_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="See future lectures >"
+                android:gravity="end"/>
+
+            <Button
+                android:id="@+id/activity_user_details_past_lectures_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="See past lectures >"
+                android:gravity="end"/>
+
+            <Button
+                android:id="@+id/activity_user_details_attended_lectures_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="See attended lectures"/>
         </LinearLayout>
+    </ScrollView>
 
-    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
