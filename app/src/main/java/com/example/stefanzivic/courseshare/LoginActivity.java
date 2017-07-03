@@ -96,6 +96,8 @@ public class LoginActivity extends AppCompatActivity {
                             user = FirebaseAuth.getInstance().getCurrentUser();
                             Toast.makeText(LoginActivity.this,user.getEmail().toString(),
                                     Toast.LENGTH_SHORT).show();
+                            Intent main = new Intent(LoginActivity.this,MainActivity.class);
+                            startActivity(main);
                         }
 
                         // ...
@@ -105,6 +107,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public void openSignupActivity() {
         Intent sigup = new Intent(LoginActivity.this,SignupActivity.class);
+        startActivity(sigup);
     }
 
 

@@ -71,6 +71,7 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     public void createUser(String email,String password) {
+        Log.d(email,password);
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -97,6 +98,9 @@ public class SignupActivity extends AppCompatActivity {
 
                             usersRef.updateChildren(userUpdates);
                             //otvori sledecu activity
+
+                            Intent intent = new Intent(SignupActivity.this,MainActivity.class);
+                            startActivity(intent);
 
                         }
 
