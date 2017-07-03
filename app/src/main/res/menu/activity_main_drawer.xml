@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:title="Lectures">
+        <menu>
+            <item
+                android:id="@+id/all_lectures_item"
+                android:title="All" />
+            <item
+                android:id="@+id/pending_lectures_item"
+                android:title="Pending" />
+        </menu>
+    </item>
+
+    <item android:title="Teachers">
+        <menu>
+            <item
+                android:id="@+id/all_teachers_item"
+                android:title="All" />
+            <item
+                android:id="@+id/favourite_teachers_item"
+                android:title="Favourite" />
+        </menu>
+    </item>
+
+</menu>
