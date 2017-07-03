@@ -29,16 +29,16 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        emailText = (EditText)findViewById(R.id.text_email);
-        passwordText = (EditText)findViewById(R.id.text_password);
-        signupButton = (Button)findViewById(R.id.signup_button);
+        emailText = (EditText)findViewById(R.id.text_email_login);
+        passwordText = (EditText)findViewById(R.id.text_password_login);
+        signupButton = (Button)findViewById(R.id.signup_button_login);
         signupButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 openSignupActivity();
             }
         });
-        loginButton = (Button)findViewById(R.id.login_button);
+        loginButton = (Button)findViewById(R.id.login_button_login);
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

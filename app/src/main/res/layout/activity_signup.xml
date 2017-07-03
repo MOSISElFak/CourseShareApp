@@ -21,7 +21,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/text_email"/>
+            android:id="@+id/text_email"
+            android:inputType="textEmailAddress"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -37,7 +38,8 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/text_password"/>
+            android:id="@+id/text_password"
+            android:inputType="textPassword"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -70,7 +72,26 @@
             android:layout_weight="1"
             android:layout_height="match_parent"
             android:id="@+id/text_description"
+            android:inputType="textMultiLine"
             />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_weight="6">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:id="@+id/imageView"/>
+        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Upload picture"
+            android:id="@+id/upload_picture_button"
+            android:layout_gravity="center"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -91,9 +112,5 @@
             android:text="Login"/>
     </LinearLayout>
 
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="9"/>
 
 </LinearLayout>
