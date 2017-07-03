@@ -2,8 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_add_new_lecture"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="Add new lecture"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_view_profile"
+        android:orderInCategory="100"
+        android:title="View profile"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_edit_profile"
+        android:orderInCategory="100"
+        android:title="Edit profile"
         app:showAsAction="never" />
+
 </menu>

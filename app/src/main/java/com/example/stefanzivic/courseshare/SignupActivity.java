@@ -94,7 +94,7 @@ public class SignupActivity extends AppCompatActivity {
                             user.setEmail(mAuth.getCurrentUser().getEmail());
 
                             Map<String, Object> userUpdates = new HashMap<String, Object>();
-                            userUpdates.put(user.getEmail(), user);
+                            userUpdates.put(user.getId(), user);
 
                             usersRef.updateChildren(userUpdates);
                             //otvori sledecu activity

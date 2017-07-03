@@ -44,7 +44,7 @@ public class UserDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_lecture_details);
+        setContentView(R.layout.activity_user_details);
 
         tvName = (TextView) findViewById(R.id.activity_user_details_name);
         tvInfo = (TextView) findViewById(R.id.activity_user_details_description);
@@ -62,6 +62,7 @@ public class UserDetailsActivity extends AppCompatActivity {
                 Intent intent = new Intent(UserDetailsActivity.this, MainActivity.class);
                 intent.putExtra(MainActivity.TYPE_EXTRA, 1);
                 intent.putExtra(MainActivity.USER_ID_EXTRA, user.getId());
+                startActivity(intent);
             }
         });
 
@@ -71,6 +72,7 @@ public class UserDetailsActivity extends AppCompatActivity {
                 Intent intent = new Intent(UserDetailsActivity.this, MainActivity.class);
                 intent.putExtra(MainActivity.TYPE_EXTRA, 2);
                 intent.putExtra(MainActivity.USER_ID_EXTRA, user.getId());
+                startActivity(intent);
             }
         });
 

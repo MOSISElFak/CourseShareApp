@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.stefanzivic.courseshare.activities.EditProfileActivity;
 import com.example.stefanzivic.courseshare.activities.LectureDetailsActivity;
 import com.example.stefanzivic.courseshare.activities.UserDetailsActivity;
 import com.example.stefanzivic.courseshare.adapters.FirebaseLectureAdapter;
@@ -109,8 +110,17 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_add_new_lecture) {
             return true;
+        }
+        if (id == R.id.action_view_profile) {
+            Intent profile = new Intent(MainActivity.this,UserDetailsActivity.class);
+            profile.putExtra(UserDetailsActivity.USER_ID_EXTRA,FirebaseAuth.getInstance().getCurrentUser().getUid());
+            startActivity(profile);
+        }
+        if (id == R.id.action_edit_profile) {
+            Intent edit = new Intent(MainActivity.this, EditProfileActivity.class);
+            startActivity(edit);
         }
 
         return super.onOptionsItemSelected(item);

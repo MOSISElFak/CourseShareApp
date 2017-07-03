@@ -61,7 +61,7 @@ public class EditProfileActivity extends AppCompatActivity {
                 updateMap.put("name", etName.getText().toString());
                 updateMap.put("info", etInfo.getText().toString());
 
-                String key = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+                String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 FirebaseDatabase.getInstance().getReference("users").child(key).updateChildren(updateMap);
             }
         });
@@ -78,7 +78,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
 
     public void loadUser() {
-        String key = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+        String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
         FirebaseDatabase.getInstance().getReference("users").child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
