@@ -84,13 +84,13 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/imageView"/>
+            android:id="@+id/activity_signup_picture"/>
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
             android:text="Upload picture"
-            android:id="@+id/upload_picture_button"
+            android:id="@+id/activity_signup_picture_button"
             android:layout_gravity="center"/>
     </LinearLayout>
     <LinearLayout

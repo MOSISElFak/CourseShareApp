@@ -1,5 +1,7 @@
 package com.example.stefanzivic.courseshare.services;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -9,14 +11,22 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.stefanzivic.courseshare.activities.LectureDetailsActivity;
 import com.example.stefanzivic.courseshare.model.Coordinates;
+import com.example.stefanzivic.courseshare.model.Lecture;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 /**
  * Created by Stefan Zivic on 7/3/2017.
@@ -30,15 +40,52 @@ public class LocationService extends Service {
     private class BackgroundLocationListener implements LocationListener {
 
         private Location mLastLocation;
-        public void setLastLocation(Location newLoc) {
+        public void setLastLocation(final Location newLoc) {
             mLastLocation = newLoc;
             FirebaseUser user = mAuth.getCurrentUser();
             if (user != null) {
                 try {
                     Coordinates newLocation = new Coordinates(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                     Toast.makeText(LocationService.this,"New location: " + newLocation.toString(),Toast.LENGTH_SHORT);
+                    Log.d("Mrkva",newLocation.toString());
                   //  mDatabase.child("users").child(user.getUid()).child("location")
                   //          .setValue(newLocation);
+                    FirebaseDatabase.getInstance().getReference("lectures").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                Lecture lecture = snapshot.getValue(Lecture.class);
+                                if (lecture != null) {
+                                    Location lectureLocation = new Location("");
+                                    lectureLocation.setLatitude(lecture.getLat());
+                                    lectureLocation.setLongitude(lecture.getLng());
+
+
+                                    if (newLoc.distanceTo(lectureLocation) < 100) {
+                                        Log.d("MRRRRRRRKVA", String.valueOf(newLoc.distanceTo(lectureLocation)) );
+                                        Intent intent = new Intent(LocationService.this, LectureDetailsActivity.class);
+                                        intent.putExtra(LectureDetailsActivity.LECTURE_ID_EXTRA, lecture.getId());
+                                        PendingIntent pendingIntent = PendingIntent.getService(LocationService.this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+
+                                        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(LocationService.this);
+                                        notificationBuilder.setContentTitle("CourseShare Lecture nearby!");
+                                        notificationBuilder.setContentText(lecture.getName() + "is close by. Attend?");
+                                        notificationBuilder.setAutoCancel(true);
+                                        notificationBuilder.setContentIntent(pendingIntent);
+
+                                        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                        notificationManager.notify(0, notificationBuilder.build());
+
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.e("FIREBASE_ERROR", "An error occurred while getting firebase data in background service:" + databaseError.getMessage());
+                        }
+                    });
                 } catch (Exception e) {
                     Log.e("EXC", e.getMessage());
                 }

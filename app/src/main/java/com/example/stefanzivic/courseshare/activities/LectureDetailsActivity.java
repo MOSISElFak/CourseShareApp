@@ -81,7 +81,7 @@ public class LectureDetailsActivity extends AppCompatActivity {
 
                     if (lecture.getPicture() != null) {
                         FirebaseStorage storage = FirebaseStorage.getInstance();
-                        StorageReference ref = storage.getReference().child(lecture.getPicture());
+                        StorageReference ref = storage.getReference().child("images").child(lecture.getPicture());
 
                         Glide.with(LectureDetailsActivity.this).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
                         //Picasso.with(LectureDetailsActivity.this).load(lecture.getPicture()).into(ivPicture);

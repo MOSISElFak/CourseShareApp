@@ -1,6 +1,11 @@
 package com.example.stefanzivic.courseshare.activities;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,9 +16,12 @@ import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.bumptech.glide.Glide;
+import com.example.stefanzivic.courseshare.MainActivity;
 import com.example.stefanzivic.courseshare.R;
+import com.example.stefanzivic.courseshare.SignupActivity;
 import com.example.stefanzivic.courseshare.model.User;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -21,11 +29,17 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EditProfileActivity extends AppCompatActivity {
+
+    private boolean pictureModified;
 
     EditText etName;
     EditText etInfo;
@@ -39,6 +53,8 @@ public class EditProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_profile);
 
+        pictureModified = false;
+
         etName = (EditText) findViewById(R.id.activity_edit_profile_name);
         etInfo = (EditText) findViewById(R.id.activity_edit_profile_info);
         ivPicture = (ImageView) findViewById(R.id.activity_edit_profile_picture);
@@ -50,7 +66,7 @@ public class EditProfileActivity extends AppCompatActivity {
         bPicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                pickImage();
             }
         });
 
@@ -63,6 +79,30 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 String key = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 FirebaseDatabase.getInstance().getReference("users").child(key).updateChildren(updateMap);
+
+                if (pictureModified) {
+                    FirebaseDatabase.getInstance().getReference("users").child(key).child("picture").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                    StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    ivPicture.setDrawingCacheEnabled(true);
+                    ivPicture.buildDrawingCache();
+                    Bitmap bitmap = ivPicture.getDrawingCache();
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                    byte[] data = baos.toByteArray();
+
+                    UploadTask uploadTask = storageReference.putBytes(data);
+                    uploadTask.addOnFailureListener(EditProfileActivity.this, new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(EditProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
+                }
+
+                Intent intent = new Intent(EditProfileActivity.this, MainActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -125,5 +165,31 @@ public class EditProfileActivity extends AppCompatActivity {
                 Toast.makeText(EditProfileActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                //Display an error
+                return;
+            }
+            try {
+                InputStream inputStream = EditProfileActivity.this.getContentResolver().openInputStream(data.getData());
+                ivPicture.setImageBitmap(BitmapFactory.decodeStream(inputStream));
+                pictureModified = true;
+
+            } catch (FileNotFoundException e) {
+                Toast.makeText(EditProfileActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public static final int PICK_IMAGE = 111;
+    public void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, PICK_IMAGE);
     }
 }

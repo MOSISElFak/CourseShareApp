@@ -32,6 +32,7 @@ import com.example.stefanzivic.courseshare.adapters.RecyclerLectureAdapter;
 import com.example.stefanzivic.courseshare.adapters.RecyclerUserAdapter;
 import com.example.stefanzivic.courseshare.model.Lecture;
 import com.example.stefanzivic.courseshare.model.User;
+import com.example.stefanzivic.courseshare.services.LocationService;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -83,6 +84,9 @@ public class MainActivity extends AppCompatActivity
         int type = getIntent().getIntExtra(TYPE_EXTRA, -1);
         String userId = getIntent().getStringExtra(USER_ID_EXTRA);
         decideWhatToShow(type, userId);
+
+        //Intent locationServiceIntent = new Intent(MainActivity.this, LocationService.class);
+        //startService(locationServiceIntent);
 
     }
 

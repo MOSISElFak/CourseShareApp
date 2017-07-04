@@ -1,6 +1,10 @@
 package com.example.stefanzivic.courseshare.activities;
 
+import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +19,7 @@ import android.widget.Toast;
 import com.example.stefanzivic.courseshare.MainActivity;
 import com.example.stefanzivic.courseshare.MapsPickerActivity;
 import com.example.stefanzivic.courseshare.R;
+import com.example.stefanzivic.courseshare.SignupActivity;
 import com.example.stefanzivic.courseshare.model.Lecture;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,11 +27,19 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerController;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Calendar;
 
 public class CreateLectureActivity extends AppCompatActivity {
@@ -62,7 +75,7 @@ public class CreateLectureActivity extends AppCompatActivity {
         etName = (EditText) findViewById(R.id.activity_create_lecture_name);
         etDescription = (EditText) findViewById(R.id.activity_create_lecture_description);
 
-        bPicture = (Button) findViewById(R.id.activity_edit_profile_picture_button);
+        bPicture = (Button) findViewById(R.id.activity_create_lecture_picture_button);
         bCreate = (Button) findViewById(R.id.activity_create_lecture_create_button);
         bCancel = (Button) findViewById(R.id.activity_create_lecture_cancel_button);
 
@@ -99,6 +112,13 @@ public class CreateLectureActivity extends AppCompatActivity {
                 CreateLectureActivity.this.finish();
             }
         });
+
+        bPicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pickImage();
+            }
+        });
     }
 
     public void showPlacePicker() {
@@ -131,19 +151,57 @@ public class CreateLectureActivity extends AppCompatActivity {
                 lecture.setMinute(minute);
 
                 timeSet = true;
-                FirebaseDatabase.getInstance().getReference("lectures").push().setValue(lecture).addOnSuccessListener(CreateLectureActivity.this, new OnSuccessListener<Void>() {
+
+                FirebaseDatabase.getInstance().getReference("lectures").push().setValue(lecture, new DatabaseReference.CompletionListener() {
                     @Override
-                    public void onSuccess(Void aVoid) {
-                        Intent intent = new Intent(CreateLectureActivity.this, MainActivity.class);
-                        Toast.makeText(CreateLectureActivity.this, "Lecture successfully created", Toast.LENGTH_SHORT).show();
-                        startActivity(intent);
-                    }
-                }).addOnFailureListener(CreateLectureActivity.this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(CreateLectureActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseReference != null) {
+
+                            databaseReference.child("id").setValue(databaseReference.getKey());
+                            databaseReference.child("picture").setValue(databaseReference.getKey());
+
+                            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("images").child(databaseReference.getKey());
+                            ivPicture.setDrawingCacheEnabled(true);
+                            ivPicture.buildDrawingCache();
+                            Bitmap bitmap = ivPicture.getDrawingCache();
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            byte[] data = baos.toByteArray();
+
+                            UploadTask uploadTask = storageReference.putBytes(data);
+                            uploadTask.addOnFailureListener(CreateLectureActivity.this, new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(CreateLectureActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+
+                                }
+                            });
+
+                            Intent intent = new Intent(CreateLectureActivity.this, MainActivity.class);
+                            Toast.makeText(CreateLectureActivity.this, "Lecture successfully created", Toast.LENGTH_SHORT).show();
+                            startActivity(intent);
+                        }
+                        else {
+                            Toast.makeText(CreateLectureActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
+//                FirebaseDatabase.getInstance().getReference("lectures").push().setValue(lecture).addOnSuccessListener(CreateLectureActivity.this, new OnSuccessListener<Void>() {
+//
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//
+//
+//                        Intent intent = new Intent(CreateLectureActivity.this, MainActivity.class);
+//                        Toast.makeText(CreateLectureActivity.this, "Lecture successfully created", Toast.LENGTH_SHORT).show();
+//                        startActivity(intent);
+//                    }
+//                }).addOnFailureListener(CreateLectureActivity.this, new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(CreateLectureActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
             }
         }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
         timePickerDialog.show(getFragmentManager(), "tag2");
@@ -164,6 +222,28 @@ public class CreateLectureActivity extends AppCompatActivity {
                 showDatePicker();
             }
         }
+        else if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                //Display an error
+                return;
+            }
+            try {
+                InputStream inputStream = CreateLectureActivity.this.getContentResolver().openInputStream(data.getData());
+                ivPicture.setImageBitmap(BitmapFactory.decodeStream(inputStream));
+
+            } catch (FileNotFoundException e) {
+                Toast.makeText(CreateLectureActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+
+
+    public static final int PICK_IMAGE = 111;
+    public void pickImage() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, PICK_IMAGE);
     }
 
 

@@ -71,7 +71,7 @@ public class UserViewHolder extends RecyclerView.ViewHolder {
     public void setPicture(String picture, String name) {
         if (picture != null) {
             FirebaseStorage storage = FirebaseStorage.getInstance();
-            StorageReference ref = storage.getReference().child(picture);
+            StorageReference ref = storage.getReference().child("images").child(picture);
 
             Glide.with(view.getContext()).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
             //Picasso.with(view.getContext()).load(picture).into(ivPicture);
