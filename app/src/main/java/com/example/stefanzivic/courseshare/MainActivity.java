@@ -20,6 +20,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.stefanzivic.courseshare.activities.CreateLectureActivity;
 import com.example.stefanzivic.courseshare.activities.EditProfileActivity;
 import com.example.stefanzivic.courseshare.activities.LectureDetailsActivity;
 import com.example.stefanzivic.courseshare.activities.UserDetailsActivity;
@@ -111,7 +112,8 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add_new_lecture) {
-            return true;
+           Intent intent = new Intent(MainActivity.this, CreateLectureActivity.class);
+            startActivity(intent);
         }
         if (id == R.id.action_view_profile) {
             Intent profile = new Intent(MainActivity.this,UserDetailsActivity.class);

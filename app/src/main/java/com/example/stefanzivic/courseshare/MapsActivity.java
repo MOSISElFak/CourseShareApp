@@ -113,24 +113,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
 
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                LatLng marker = place.getLatLng();
-                mMap.addMarker(new MarkerOptions().position(marker).title("Marker in Sydney"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(marker));
 
-
-            }
-
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Log.i("TAG", "An error occurred: " + status);
-            }
-        });
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -149,21 +132,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    GoogleMap.OnMapClickListener onMapClickListener  = new GoogleMap.OnMapClickListener() {
-        @Override
-        public void onMapClick(LatLng latLng) {
-            Geocoder geocoder = new Geocoder(MapsActivity.this, Locale.getDefault());
-            try {
-                List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                mMap.addMarker(new MarkerOptions().position(latLng).title(addresses.get(0).toString()));
-                Log.d("address",addresses.get(0).toString());
-            }
-            catch (IOException e) {
 
-            }
-
-        }
-    };
 
 
 }

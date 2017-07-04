@@ -13,8 +13,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.stefanzivic.courseshare.MainActivity;
+import com.example.stefanzivic.courseshare.MapsPickerActivity;
 import com.example.stefanzivic.courseshare.R;
 import com.example.stefanzivic.courseshare.model.Lecture;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -29,6 +31,7 @@ import java.util.Calendar;
 
 public class CreateLectureActivity extends AppCompatActivity {
 
+    private final int MAPS_PICKER_ACTIVITY_RESULT = 1;
     private boolean placeSet;
     private boolean dateSet;
     private boolean timeSet;
@@ -99,7 +102,8 @@ public class CreateLectureActivity extends AppCompatActivity {
     }
 
     public void showPlacePicker() {
-
+        Intent intent = new Intent(CreateLectureActivity.this, MapsPickerActivity.class);
+        startActivityForResult(intent,MAPS_PICKER_ACTIVITY_RESULT);
     }
 
     public void showDatePicker() {
@@ -143,6 +147,23 @@ public class CreateLectureActivity extends AppCompatActivity {
             }
         }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), true);
         timePickerDialog.show(getFragmentManager(), "tag2");
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MAPS_PICKER_ACTIVITY_RESULT) {
+            if(resultCode == RESULT_OK) {
+                LatLng selectedPlace = data.getParcelableExtra("selected_place");
+                String address = data.getStringExtra("selected_address");
+
+                lecture.setLat(selectedPlace.latitude);
+                lecture.setLng(selectedPlace.longitude);
+                lecture.setAddress(address);
+
+                placeSet = true;
+                showDatePicker();
+            }
+        }
     }
 
 

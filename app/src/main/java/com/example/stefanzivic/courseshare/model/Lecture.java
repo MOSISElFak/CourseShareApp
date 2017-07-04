@@ -21,6 +21,7 @@ public class Lecture {
     private String picture;
 
     private Boolean running;
+    private String address;
     private double lat;
     private double lng;
 
@@ -160,5 +161,13 @@ public class Lecture {
 
     public void setMinute(int minute) {
         this.minute = minute;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
