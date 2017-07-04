@@ -30,6 +30,7 @@ import com.example.stefanzivic.courseshare.adapters.OnLectureClickListener;
 import com.example.stefanzivic.courseshare.adapters.OnUserClickListener;
 import com.example.stefanzivic.courseshare.adapters.RecyclerLectureAdapter;
 import com.example.stefanzivic.courseshare.adapters.RecyclerUserAdapter;
+import com.example.stefanzivic.courseshare.bluetooth.BluetoothConnection;
 import com.example.stefanzivic.courseshare.model.Lecture;
 import com.example.stefanzivic.courseshare.model.User;
 import com.example.stefanzivic.courseshare.services.LocationService;
@@ -90,8 +91,9 @@ public class MainActivity extends AppCompatActivity
             recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
         }
 
-//        Intent locationServiceIntent = new Intent(MainActivity.this, LocationService.class);
-//        startService(locationServiceIntent);
+        Intent locationServiceIntent = new Intent(MainActivity.this, LocationService.class);
+
+        startService(locationServiceIntent);
 
     }
 
@@ -132,6 +134,10 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_edit_profile) {
             Intent edit = new Intent(MainActivity.this, EditProfileActivity.class);
             startActivity(edit);
+        }
+        if(id==R.id.action_bluetooth_connect) {
+            Intent intent = new Intent(MainActivity.this, BluetoothConnection.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);

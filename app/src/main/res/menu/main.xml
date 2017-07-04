@@ -16,5 +16,10 @@
         android:orderInCategory="100"
         android:title="Edit profile"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_bluetooth_connect"
+        android:orderInCategory="100"
+        android:title="Connect via bluetooth"
+        app:showAsAction="never" />
 
 </menu>

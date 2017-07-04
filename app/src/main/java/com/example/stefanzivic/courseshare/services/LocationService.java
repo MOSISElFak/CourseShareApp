@@ -1,5 +1,6 @@
 package com.example.stefanzivic.courseshare.services;
 
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -15,7 +16,10 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.example.stefanzivic.courseshare.NotificationReceiverActivity;
+import com.example.stefanzivic.courseshare.R;
 import com.example.stefanzivic.courseshare.activities.LectureDetailsActivity;
+import com.example.stefanzivic.courseshare.bluetooth.BluetoothConnection;
 import com.example.stefanzivic.courseshare.model.Coordinates;
 import com.example.stefanzivic.courseshare.model.Lecture;
 import com.google.firebase.auth.FirebaseAuth;
@@ -63,18 +67,28 @@ public class LocationService extends Service {
 
                                     if (newLoc.distanceTo(lectureLocation) < 100) {
                                         Log.d("MRRRRRRRKVA", String.valueOf(newLoc.distanceTo(lectureLocation)) );
-                                        Intent intent = new Intent(LocationService.this, LectureDetailsActivity.class);
+                                        Intent intent = new Intent(LocationService.this, BluetoothConnection.class);
                                         intent.putExtra(LectureDetailsActivity.LECTURE_ID_EXTRA, lecture.getId());
-                                        PendingIntent pendingIntent = PendingIntent.getService(LocationService.this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
+                                        PendingIntent pIntent = PendingIntent.getActivity(LocationService.this, (int) System.currentTimeMillis(), intent, 0);
+                                        Notification noti = new Notification.Builder(LocationService.this)
+                                                .setContentTitle("CourseShare-Lecture nearby")
+                                                .setContentText(lecture.getName()+"is near. Click to connect with others participants").setSmallIcon(R.drawable.ic_menu_send)
+                                                .setContentIntent(pIntent).build();
+                                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                                        // hide the notification after its selected
+                                        noti.flags |= Notification.FLAG_AUTO_CANCEL;
 
-                                        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(LocationService.this);
-                                        notificationBuilder.setContentTitle("CourseShare Lecture nearby!");
-                                        notificationBuilder.setContentText(lecture.getName() + "is close by. Attend?");
-                                        notificationBuilder.setAutoCancel(true);
-                                        notificationBuilder.setContentIntent(pendingIntent);
+                                        notificationManager.notify(0, noti);
+                                        //PendingIntent pendingIntent = PendingIntent.getService(LocationService.this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
-                                        NotificationManager notificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
-                                        notificationManager.notify(0, notificationBuilder.build());
+//                                        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(LocationService.this);
+//                                        notificationBuilder.setContentTitle("CourseShare Lecture nearby!");
+//                                        notificationBuilder.setContentText(lecture.getName() + "is close by. Attend?");
+//                                        notificationBuilder.setAutoCancel(true);
+//                                        notificationBuilder.setContentIntent(pendingIntent);
+//
+//                                        NotificationManager notificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
+//                                        notificationManager.notify(0, notificationBuilder.build());
 
                                     }
                                 }
@@ -120,7 +134,7 @@ public class LocationService extends Service {
     }
 
     private LocationManager mLocationManager;
-    private static final int LOCATION_INTERVAL = 1000;
+    private static final int LOCATION_INTERVAL = 30000;
     private static final float LOCATION_DISTANCE = 10f;
     LocationListener[] mLocationListeners = new LocationListener[]{
             new BackgroundLocationListener(LocationManager.GPS_PROVIDER),

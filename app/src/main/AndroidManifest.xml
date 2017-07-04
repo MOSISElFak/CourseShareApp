@@ -63,8 +63,11 @@
 
         <service android:name=".services.LocationService" />
 
+        <receiver android:name=".receivers.notification_receiver"></receiver>
+
         <activity android:name=".bluetooth.BluetoothConnection" />
-        <activity android:name=".bluetooth.DeviceList"></activity>
+        <activity android:name=".bluetooth.DeviceList" />
+        <activity android:name=".NotificationReceiverActivity"></activity>
     </application>
 
 </manifest>

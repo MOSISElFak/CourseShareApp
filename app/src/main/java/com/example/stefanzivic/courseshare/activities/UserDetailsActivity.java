@@ -15,6 +15,7 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.bumptech.glide.Glide;
 import com.example.stefanzivic.courseshare.MainActivity;
 import com.example.stefanzivic.courseshare.R;
+import com.example.stefanzivic.courseshare.bluetooth.BluetoothConnection;
 import com.example.stefanzivic.courseshare.model.Lecture;
 import com.example.stefanzivic.courseshare.model.User;
 //import com.firebase.ui.storage.images.FirebaseImageLoader;
@@ -60,6 +61,16 @@ public class UserDetailsActivity extends AppCompatActivity {
         bAttendedLectures = (Button) findViewById(R.id.activity_user_details_attended_lectures_button);
         bFollow = (Button) findViewById(R.id.activity_user_details_follow_button);
         following = false;
+        Button bluetooth = (Button)findViewById(R.id.bluetooth);
+        bluetooth.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(UserDetailsActivity.this, BluetoothConnection.class);
+                        startActivity(intent);
+                    }
+                }
+        );
 
         userId = getIntent().getStringExtra(USER_ID_EXTRA);
 

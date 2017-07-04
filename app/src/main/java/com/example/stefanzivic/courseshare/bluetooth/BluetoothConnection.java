@@ -32,16 +32,19 @@ public class BluetoothConnection extends AppCompatActivity {
     // Key names received from the BluetoothConnectionService Handler
     public static final String DEVICE_NAME = "device_name";
     public static final String TOAST = "toast";
+    public  static final String DEVICE_ID = "device_id";
 
     // Intent request codes
     private static final int REQUEST_CONNECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
     private EditText mOutEditText;
     private Button mSendButton;
-    private TextView recvMsgTextView;
+    private TextView recvMsgTextView,recvIdTextView;
 
     // Name of the connected device
     private String mConnectedDeviceName = null;
+    private String mConnectedDeviceUserId = null;
+
     // String buffer for outgoing messages
     private StringBuffer mOutStringBuffer;
 
@@ -56,8 +59,9 @@ public class BluetoothConnection extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bluetooth_connection);
 
-        //mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-       // recvMsgTextView = (TextView)findViewById(R.id.messageRecTextView);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        recvMsgTextView = (TextView)findViewById(R.id.messageRecTextView);
+        recvIdTextView = (TextView)findViewById(R.id.receivedIdTextView);
         // If the adapter is null, then Bluetooth is not supported
         if (mBluetoothAdapter == null) {
             Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
@@ -169,6 +173,8 @@ public class BluetoothConnection extends AppCompatActivity {
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
+                    if(recvIdTextView.getText().toString().isEmpty())
+                        recvIdTextView.setText(readMessage);
                     recvMsgTextView.setText(readMessage);
                     //     mAdapter.notifyDataSetChanged();
                     //     messageList.add(new androidRecyclerView.Message(counter++, readMessage, mConnectedDeviceName));
@@ -176,8 +182,25 @@ public class BluetoothConnection extends AppCompatActivity {
                 case MESSAGE_DEVICE_NAME:
                     // save the connected device's name
                     mConnectedDeviceName = msg.getData().getString(DEVICE_NAME);
+                    mConnectedDeviceUserId = msg.getData().getString(DEVICE_ID);
                     Toast.makeText(getApplicationContext(), "Connected to "
                             + mConnectedDeviceName, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Connected to user "
+                            + mConnectedDeviceUserId, Toast.LENGTH_SHORT).show();
+
+                    ////////// deo da se primi id(handshake) /////////////////
+                    if (mConnService.getState() != BluetoothConnectionService.STATE_CONNECTED) {
+                        Toast.makeText(BluetoothConnection.this, "Not connected", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                        byte[] send = mConnectedDeviceUserId.getBytes();
+                        mConnService.write(send);
+                        // Reset out string buffer to zero and clear the edit text field
+                      //  mOutStringBuffer.setLength(0);
+                       // recvIdTextView.setText(mOutStringBuffer);
+                    ////////////////////////////////////////////////////////////////
+
                     break;
                 case MESSAGE_TOAST:
                     Toast.makeText(getApplicationContext(), msg.getData().getString(TOAST),

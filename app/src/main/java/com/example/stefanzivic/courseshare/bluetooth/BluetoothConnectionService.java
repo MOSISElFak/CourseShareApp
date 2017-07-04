@@ -16,6 +16,8 @@ import android.os.Handler;
 
 import android.os.Message;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 /**
  * Created by Stefan Zivic on 7/4/2017.
  */
@@ -135,6 +137,7 @@ public class BluetoothConnectionService {
         Message msg = mHandler.obtainMessage(BluetoothConnection.MESSAGE_DEVICE_NAME);
         Bundle bundle = new Bundle();
         bundle.putString(BluetoothConnection.DEVICE_NAME, device.getName());
+        bundle.putString(BluetoothConnection.DEVICE_ID, FirebaseAuth.getInstance().getCurrentUser().getUid());
         msg.setData(bundle);
         mHandler.sendMessage(msg);
         setState(STATE_CONNECTED);
