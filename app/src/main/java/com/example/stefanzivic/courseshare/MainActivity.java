@@ -83,10 +83,15 @@ public class MainActivity extends AppCompatActivity
 
         int type = getIntent().getIntExtra(TYPE_EXTRA, -1);
         String userId = getIntent().getStringExtra(USER_ID_EXTRA);
-        decideWhatToShow(type, userId);
+        if (type != -1) {
+            decideWhatToShow(type, userId);
+        }
+        else {
+            recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+        }
 
-        //Intent locationServiceIntent = new Intent(MainActivity.this, LocationService.class);
-        //startService(locationServiceIntent);
+//        Intent locationServiceIntent = new Intent(MainActivity.this, LocationService.class);
+//        startService(locationServiceIntent);
 
     }
 
@@ -182,11 +187,21 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     List<User> users = new ArrayList<User>();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        User user = snapshot.getValue(User.class);
-                        users.add(user);
+                    User currentUser = dataSnapshot.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).getValue(User.class);
+                    if (currentUser != null && currentUser.get_favouriteTeachers() != null) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            User user = snapshot.getValue(User.class);
+                            if (user != null) {
+                                if (currentUser.get_favouriteTeachers().containsKey(user.getId())) {
+                                    users.add(user);
+                                }
+                            }
+                        }
+                        recyclerView.setAdapter(new RecyclerUserAdapter(users, MainActivity.this));
                     }
-                    recyclerView.setAdapter(new RecyclerUserAdapter(users, MainActivity.this));
+                    else {
+                        recyclerView.setAdapter(new FirebaseUserAdapter(FirebaseDatabase.getInstance().getReference("users"), MainActivity.this));
+                    }
                 }
 
                 @Override
@@ -196,15 +211,38 @@ public class MainActivity extends AppCompatActivity
             });
         }
         else if(id == R.id.pending_lectures_item) {
-            FirebaseDatabase.getInstance().getReference("lectures").addValueEventListener(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    List<Lecture> lectures = new ArrayList<Lecture>();
-                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        Lecture lecture = snapshot.getValue(Lecture.class);
-                        lectures.add(lecture);
+                    final User currentUser = dataSnapshot.getValue(User.class);
+                    if (currentUser != null) {
+                        if (currentUser.get_interestedLectures() != null) {
+                            FirebaseDatabase.getInstance().getReference("lectures").addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    //FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new );
+                                    List<Lecture> lectures = new ArrayList<Lecture>();
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        Lecture lecture = snapshot.getValue(Lecture.class);
+                                        if (lecture != null) {
+                                            if (currentUser.get_interestedLectures().containsKey(lecture.getId())) {
+                                                lectures.add(lecture);
+                                            }
+                                        }
+                                    }
+                                    recyclerView.setAdapter(new RecyclerLectureAdapter(lectures, MainActivity.this));
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                        else {
+                            recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+                        }
                     }
-                    recyclerView.setAdapter(new RecyclerLectureAdapter(lectures, MainActivity.this));
                 }
 
                 @Override
@@ -212,6 +250,7 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
+
         }
 
 
@@ -246,7 +285,7 @@ public class MainActivity extends AppCompatActivity
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         User user = dataSnapshot.getValue(User.class);
                         if (user != null) {
-                            final Map<String, Boolean> userLectures;
+                            final Map<String, Object> userLectures;
                             if (type == 1) { //future lectures
                                 userLectures = user.get_myLectures();
                             }

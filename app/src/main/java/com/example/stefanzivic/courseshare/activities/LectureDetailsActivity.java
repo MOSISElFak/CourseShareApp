@@ -17,8 +17,10 @@ import com.example.stefanzivic.courseshare.MapsActivity;
 import com.example.stefanzivic.courseshare.R;
 import com.example.stefanzivic.courseshare.model.Lecture;
 //import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.example.stefanzivic.courseshare.model.User;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -39,6 +41,8 @@ public class LectureDetailsActivity extends AppCompatActivity {
     private TextView tvDescription;
     private Button bViewTrainer;
     private Button bShowOnMap;
+    private Button bFollow;
+    private Boolean following;
 
     private Lecture lecture;
 
@@ -58,6 +62,7 @@ public class LectureDetailsActivity extends AppCompatActivity {
                 showLectureOnMap();
             }
         });
+        bFollow = (Button) findViewById(R.id.activity_lecture_details_follow_button);
 
         FirebaseDatabase.getInstance().getReference("lectures").child(lectureId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -92,12 +97,71 @@ public class LectureDetailsActivity extends AppCompatActivity {
                                 .buildRoundRect(tvName.getText().toString().substring(0, 1), Color.DKGRAY, 16);
                         ivPicture.setImageDrawable(drawable);
                     }
+
+                    FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            bFollow.setVisibility(View.VISIBLE);
+                            User currentUser = dataSnapshot.getValue(User.class);
+                            if (currentUser != null) {
+                                if (currentUser.get_interestedLectures() == null || !currentUser.get_interestedLectures().containsKey(lectureId)) {
+                                    bFollow.setText("Follow");
+                                    following = false;
+                                }
+                                else {
+                                    bFollow.setText("Unfollow");
+                                    following = true;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            bFollow.setVisibility(View.INVISIBLE);
+                        }
+                    });
                 }
                 else {
                     tvName.setText("Selected lecture doesn't exist anymore");
                     tvDescription.setText("");
                     ivPicture.setImageResource(0);
                 }
+
+                bFollow.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                User currentUser = dataSnapshot.getValue(User.class);
+                                if (currentUser != null) {
+                                    if (following) {
+                                        //User currentUser = FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("_interestedLectures").setValue(lectureId, null);
+                                        Map<String, Object> pom = currentUser.get_interestedLectures();
+                                        pom.remove(lectureId);
+                                        FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("_interestedLectures").setValue(pom);
+                                        bFollow.setText("Follow");
+                                        following = false;
+                                    }
+                                    else {
+                                        //FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("_interestedLectures").setValue(lectureId, "true");
+                                        Map<String, Object> pom = currentUser.get_interestedLectures();
+                                        pom.put(lectureId, true);
+                                        FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("_interestedLectures").setValue(pom);
+                                        bFollow.setText("Unfollow");
+                                        following = true;
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(LectureDetailsActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+                });
 
             }
 

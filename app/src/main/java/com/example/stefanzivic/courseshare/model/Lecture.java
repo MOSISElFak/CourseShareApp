@@ -21,13 +21,15 @@ public class Lecture {
     private String picture;
 
     private Boolean running;
+    private Boolean past;
+
     private String address;
     private double lat;
     private double lng;
 
     private String _user;
-    private Map<String, Boolean> _studentsPending = new HashMap<>();
-    private Map<String, Boolean> _studentsApproved = new HashMap<>();
+    //private Map<String, Boolean> _studentsPending = new HashMap<>();
+    //private Map<String, Boolean> _studentsApproved = new HashMap<>();
     private Map<String, Boolean> _studentsAttending = new HashMap<>();
 
 
@@ -67,21 +69,21 @@ public class Lecture {
         this._user = _user;
     }
 
-    public Map<String, Boolean> get_studentsPending() {
-        return _studentsPending;
-    }
-
-    public void set_studentsPending(Map<String, Boolean> _studentsPending) {
-        this._studentsPending = _studentsPending;
-    }
-
-    public Map<String, Boolean> get_studentsApproved() {
-        return _studentsApproved;
-    }
-
-    public void set_studentsApproved(Map<String, Boolean> _studentsApproved) {
-        this._studentsApproved = _studentsApproved;
-    }
+//    public Map<String, Boolean> get_studentsPending() {
+//        return _studentsPending;
+//    }
+//
+//    public void set_studentsPending(Map<String, Boolean> _studentsPending) {
+//        this._studentsPending = _studentsPending;
+//    }
+//
+//    public Map<String, Boolean> get_studentsApproved() {
+//        return _studentsApproved;
+//    }
+//
+//    public void set_studentsApproved(Map<String, Boolean> _studentsApproved) {
+//        this._studentsApproved = _studentsApproved;
+//    }
 
     public Boolean getRunning() {
         return running;
@@ -169,5 +171,13 @@ public class Lecture {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Boolean getPast() {
+        return past;
+    }
+
+    public void setPast(Boolean past) {
+        this.past = past;
     }
 }

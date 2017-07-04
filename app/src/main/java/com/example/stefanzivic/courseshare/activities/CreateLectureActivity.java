@@ -150,6 +150,9 @@ public class CreateLectureActivity extends AppCompatActivity {
                 lecture.setHour(hourOfDay);
                 lecture.setMinute(minute);
 
+                lecture.setRunning(false);
+                lecture.setPast(false);
+
                 timeSet = true;
 
                 FirebaseDatabase.getInstance().getReference("lectures").push().setValue(lecture, new DatabaseReference.CompletionListener() {

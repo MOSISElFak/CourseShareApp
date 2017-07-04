@@ -2,6 +2,7 @@ package com.example.stefanzivic.courseshare.model;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Stefan Zivic on 7/3/2017.
@@ -17,13 +18,13 @@ public class User {
     private String picture;
 
 
-    Map<String, Boolean> _favouriteTeachers = new HashMap<>();
-    Map<String, Boolean> _requestedLectures = new HashMap<>();
-    Map<String, Boolean> _attendedLectures = new HashMap<>();
+    Map<String, Object> _favouriteTeachers = new HashMap<>();
+    Map<String, Object> _interestedLectures = new HashMap<>();
+    Map<String, Object> _attendedLectures = new HashMap<>();
 
 
-    private Map<String, Boolean> _myLectures = new HashMap<>();
-    private Map<String, Boolean> _myPastLectures = new HashMap<>();
+    private Map<String, Object> _myLectures = new HashMap<>();
+    private Map<String, Object> _myPastLectures = new HashMap<>();
 
 
     public User() {
@@ -70,43 +71,43 @@ public class User {
         this.picture = picture;
     }
 
-    public Map<String, Boolean> get_favouriteTeachers() {
+    public Map<String, Object> get_favouriteTeachers() {
         return _favouriteTeachers;
     }
 
-    public void set_favouriteTeachers(Map<String, Boolean> _favouriteTeachers) {
+    public void set_favouriteTeachers(Map<String, Object> _favouriteTeachers) {
         this._favouriteTeachers = _favouriteTeachers;
     }
 
-    public Map<String, Boolean> get_requestedLectures() {
-        return _requestedLectures;
+    public Map<String, Object> get_interestedLectures() {
+        return _interestedLectures;
     }
 
-    public void set_requestedLectures(Map<String, Boolean> _requestedLectures) {
-        this._requestedLectures = _requestedLectures;
+    public void set_requestedLectures(Map<String, Object> _interestedLectures) {
+        this._interestedLectures = _interestedLectures;
     }
 
-    public Map<String, Boolean> get_attendedLectures() {
+    public Map<String, Object> get_attendedLectures() {
         return _attendedLectures;
     }
 
-    public void set_attendedLectures(Map<String, Boolean> _attendedLectures) {
+    public void set_attendedLectures(Map<String, Object> _attendedLectures) {
         this._attendedLectures = _attendedLectures;
     }
 
-    public Map<String, Boolean> get_myLectures() {
+    public Map<String, Object> get_myLectures() {
         return _myLectures;
     }
 
-    public void set_myLectures(Map<String, Boolean> _myLectures) {
+    public void set_myLectures(Map<String, Object> _myLectures) {
         this._myLectures = _myLectures;
     }
 
-    public Map<String, Boolean> get_myPastLectures() {
+    public Map<String, Object> get_myPastLectures() {
         return _myPastLectures;
     }
 
-    public void set_myPastLectures(Map<String, Boolean> _myPastLectures) {
+    public void set_myPastLectures(Map<String, Object> _myPastLectures) {
         this._myPastLectures = _myPastLectures;
     }
 

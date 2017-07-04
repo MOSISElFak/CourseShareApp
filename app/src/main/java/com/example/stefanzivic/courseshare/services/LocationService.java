@@ -73,7 +73,7 @@ public class LocationService extends Service {
                                         notificationBuilder.setAutoCancel(true);
                                         notificationBuilder.setContentIntent(pendingIntent);
 
-                                        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                                        NotificationManager notificationManager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
                                         notificationManager.notify(0, notificationBuilder.build());
 
                                     }
