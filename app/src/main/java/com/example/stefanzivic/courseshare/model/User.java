@@ -20,7 +20,8 @@ public class User {
 
     Map<String, Object> _favouriteTeachers = new HashMap<>();
     Map<String, Object> _interestedLectures = new HashMap<>();
-    Map<String, Object> _attendedLectures = new HashMap<>();
+    Map<String, Object> _friendUsers = new HashMap<>();
+    //Map<String, Object> _attendedLectures = new HashMap<>();
 
 
     private Map<String, Object> _myLectures = new HashMap<>();
@@ -83,17 +84,17 @@ public class User {
         return _interestedLectures;
     }
 
-    public void set_requestedLectures(Map<String, Object> _interestedLectures) {
+    public void set_interestedLectures(Map<String, Object> _interestedLectures) {
         this._interestedLectures = _interestedLectures;
     }
 
-    public Map<String, Object> get_attendedLectures() {
-        return _attendedLectures;
-    }
-
-    public void set_attendedLectures(Map<String, Object> _attendedLectures) {
-        this._attendedLectures = _attendedLectures;
-    }
+//    public Map<String, Object> get_attendedLectures() {
+//        return _attendedLectures;
+//    }
+//
+//    public void set_attendedLectures(Map<String, Object> _attendedLectures) {
+//        this._attendedLectures = _attendedLectures;
+//    }
 
     public Map<String, Object> get_myLectures() {
         return _myLectures;
@@ -117,5 +118,14 @@ public class User {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+
+    public Map<String, Object> get_friendUsers() {
+        return _friendUsers;
+    }
+
+    public void set_friendUsers(Map<String, Object> _friendUsers) {
+        this._friendUsers = _friendUsers;
     }
 }

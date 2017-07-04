@@ -141,9 +141,10 @@ public class EditProfileActivity extends AppCompatActivity {
 
                     if (user.getPicture() != null) {
                         FirebaseStorage storage = FirebaseStorage.getInstance();
-                        StorageReference ref = storage.getReference().child(user.getPicture());
+                        StorageReference ref = storage.getReference().child("images").child(user.getPicture());
 
-                        Glide.with(EditProfileActivity.this).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
+                        //EditProfileActivity.this
+                        Glide.with(getBaseContext()).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
                         //Picasso.with(EditProfileActivity.this).load(user.getPicture()).into(ivPicture);
                     }
                     else {

@@ -41,7 +41,7 @@ public class UserDetailsActivity extends AppCompatActivity {
 
     private Button bFutureLectures;
     private Button bPastLectures;
-    private Button bAttendedLectures;
+    private Button bFriends;
     private Button bFollow;
     private boolean following;
 
@@ -58,7 +58,7 @@ public class UserDetailsActivity extends AppCompatActivity {
 
         bFutureLectures = (Button) findViewById(R.id.activity_user_details_future_lectures_button);
         bPastLectures = (Button) findViewById(R.id.activity_user_details_past_lectures_button);
-        bAttendedLectures = (Button) findViewById(R.id.activity_user_details_attended_lectures_button);
+        bFriends = (Button) findViewById(R.id.activity_user_details_friends_button);
         bFollow = (Button) findViewById(R.id.activity_user_details_follow_button);
         following = false;
         Button bluetooth = (Button)findViewById(R.id.bluetooth);
@@ -94,10 +94,13 @@ public class UserDetailsActivity extends AppCompatActivity {
             }
         });
 
-        bAttendedLectures.setOnClickListener(new View.OnClickListener() {
+        bFriends.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(UserDetailsActivity.this, "Ovo treba uraditi", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(UserDetailsActivity.this, MainActivity.class);
+                intent.putExtra(MainActivity.TYPE_EXTRA, 3);
+                intent.putExtra(MainActivity.USER_ID_EXTRA, user.getId());
+                startActivity(intent);
             }
         });
 
@@ -126,7 +129,8 @@ public class UserDetailsActivity extends AppCompatActivity {
                         FirebaseStorage storage = FirebaseStorage.getInstance();
                         StorageReference ref = storage.getReference().child("images").child(user.getPicture());
 
-                        Glide.with(UserDetailsActivity.this).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
+                        //UserDetailsActivity.this
+                        Glide.with(getBaseContext()).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
                         //Picasso.with(UserDetailsActivity.this).load(user.getPicture()).into(ivPicture);
                     }
                     else {

@@ -40,6 +40,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -63,8 +64,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-      //  textViewEmail = (TextView)findViewById(R.id.textViewEmail);
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        //textViewEmail = (TextView)findViewById(R.id.text_view_email);
+        //FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         //textViewEmail.setText(currentUser.getEmail().toString());
 
         recyclerView = (RecyclerView)findViewById(R.id.recycler_view);
@@ -88,12 +89,24 @@ public class MainActivity extends AppCompatActivity
             decideWhatToShow(type, userId);
         }
         else {
-            recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+            //recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures").orderByChild("past").equalTo(false).getRef(), MainActivity.this));
+            FirebaseDatabase.getInstance().getReference("lectures").orderByChild("past").equalTo(false).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    List<Lecture> lectures = new ArrayList<Lecture>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Lecture lecture = snapshot.getValue(Lecture.class);
+                        lectures.add(lecture);
+                    }
+                    recyclerView.setAdapter(new RecyclerLectureAdapter(lectures, MainActivity.this));
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
-
-        Intent locationServiceIntent = new Intent(MainActivity.this, LocationService.class);
-
-        startService(locationServiceIntent);
 
     }
 
@@ -139,6 +152,11 @@ public class MainActivity extends AppCompatActivity
             Intent intent = new Intent(MainActivity.this, BluetoothConnection.class);
             startActivity(intent);
         }
+        if (id == R.id.action_start_location) {
+            Intent locationServiceIntent = new Intent(MainActivity.this, LocationService.class);
+
+            startService(locationServiceIntent);
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -151,7 +169,7 @@ public class MainActivity extends AppCompatActivity
         if(id == R.id.all_lectures_item) {
             //recyclerView.setLayoutManager(new LinearLayoutManager(this));
             //recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
-            FirebaseDatabase.getInstance().getReference("lectures").addValueEventListener(new ValueEventListener() {
+            FirebaseDatabase.getInstance().getReference("lectures").orderByChild("past").equalTo(false).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     List<Lecture> lectures = new ArrayList<Lecture>();
@@ -223,7 +241,7 @@ public class MainActivity extends AppCompatActivity
                     final User currentUser = dataSnapshot.getValue(User.class);
                     if (currentUser != null) {
                         if (currentUser.get_interestedLectures() != null) {
-                            FirebaseDatabase.getInstance().getReference("lectures").addValueEventListener(new ValueEventListener() {
+                            FirebaseDatabase.getInstance().getReference("lectures").orderByChild("past").equalTo(false).addValueEventListener(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     //FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new );
@@ -246,7 +264,23 @@ public class MainActivity extends AppCompatActivity
                             });
                         }
                         else {
-                            recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+                            //recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+                            FirebaseDatabase.getInstance().getReference("lectures").orderByChild("past").equalTo(false).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    List<Lecture> lectures = new ArrayList<Lecture>();
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        Lecture lecture = snapshot.getValue(Lecture.class);
+                                        lectures.add(lecture);
+                                    }
+                                    recyclerView.setAdapter(new RecyclerLectureAdapter(lectures, MainActivity.this));
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     }
                 }
@@ -282,27 +316,66 @@ public class MainActivity extends AppCompatActivity
     public void decideWhatToShow(final int type, String userId) {
 
         if (type == -1) {
-            recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+            //recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+            FirebaseDatabase.getInstance().getReference("lectures").orderByChild("past").equalTo(false).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    List<Lecture> lectures = new ArrayList<Lecture>();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Lecture lecture = snapshot.getValue(Lecture.class);
+                        lectures.add(lecture);
+                    }
+                    recyclerView.setAdapter(new RecyclerLectureAdapter(lectures, MainActivity.this));
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
         else {
             if (userId != null) {
                 FirebaseDatabase.getInstance().getReference("users").child(userId).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
+                        final User user = dataSnapshot.getValue(User.class);
                         if (user != null) {
                             final Map<String, Object> userLectures;
+                            Query query;
                             if (type == 1) { //future lectures
                                 userLectures = user.get_myLectures();
+                                query = FirebaseDatabase.getInstance().getReference("lectures").orderByChild("past").equalTo(false);
                             }
                             else if (type == 2) {
                                 userLectures = user.get_myPastLectures();
+                                query = FirebaseDatabase.getInstance().getReference("lectures").orderByChild("past").equalTo(true);
                             }
                             else {
-                                userLectures = null;
+                                FirebaseDatabase.getInstance().getReference("users").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        List<User> userList = new ArrayList<User>();
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            User u = snapshot.getValue(User.class);
+                                            if (u != null) {
+                                                if (user.get_friendUsers().containsKey(u.getId())) {
+                                                    userList.add(u);
+                                                }
+                                            }
+                                        }
+                                        recyclerView.setAdapter(new RecyclerUserAdapter(userList, MainActivity.this));
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                                return;
                             }
                             if (userLectures != null) {
-                                FirebaseDatabase.getInstance().getReference("lectures").addValueEventListener(new ValueEventListener() {
+                                query.addValueEventListener(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         List<Lecture> lectureList  = new ArrayList<Lecture>();
@@ -324,11 +397,43 @@ public class MainActivity extends AppCompatActivity
                                 });
                             }
                             else {
-                                recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+                                //recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+                                FirebaseDatabase.getInstance().getReference("lectures").orderByChild("past").equalTo(false).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        List<Lecture> lectures = new ArrayList<Lecture>();
+                                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                            Lecture lecture = snapshot.getValue(Lecture.class);
+                                            lectures.add(lecture);
+                                        }
+                                        recyclerView.setAdapter(new RecyclerLectureAdapter(lectures, MainActivity.this));
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
 
                         } else {
-                            recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+                            //recyclerView.setAdapter(new FirebaseLectureAdapter(FirebaseDatabase.getInstance().getReference("lectures"), MainActivity.this));
+                            FirebaseDatabase.getInstance().getReference("lectures").orderByChild("past").equalTo(false).addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    List<Lecture> lectures = new ArrayList<Lecture>();
+                                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                        Lecture lecture = snapshot.getValue(Lecture.class);
+                                        lectures.add(lecture);
+                                    }
+                                    recyclerView.setAdapter(new RecyclerLectureAdapter(lectures, MainActivity.this));
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         }
                     }
 

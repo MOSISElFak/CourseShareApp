@@ -150,7 +150,7 @@ public class CreateLectureActivity extends AppCompatActivity {
                 lecture.setHour(hourOfDay);
                 lecture.setMinute(minute);
 
-                lecture.setRunning(false);
+                //lecture.setRunning(false);
                 lecture.setPast(false);
 
                 timeSet = true;

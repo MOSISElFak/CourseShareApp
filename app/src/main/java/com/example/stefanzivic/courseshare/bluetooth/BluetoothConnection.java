@@ -17,6 +17,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stefanzivic.courseshare.R;
+import com.example.stefanzivic.courseshare.model.User;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Map;
 
 public class BluetoothConnection extends AppCompatActivity {
 
@@ -172,10 +180,27 @@ public class BluetoothConnection extends AppCompatActivity {
                 case MESSAGE_READ:
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
-                    String readMessage = new String(readBuf, 0, msg.arg1);
-                    if(recvIdTextView.getText().toString().isEmpty())
+                    final String readMessage = new String(readBuf, 0, msg.arg1);
+                    if(recvIdTextView.getText().toString().isEmpty()) {
                         recvIdTextView.setText(readMessage);
-                    recvMsgTextView.setText(readMessage);
+                        FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                User currentUser = dataSnapshot.getValue(User.class);
+                                Map<String, Object> pom = currentUser.get_friendUsers();
+                                pom.put(readMessage, true);
+                                FirebaseDatabase.getInstance().getReference("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("_friendUsers").setValue(pom);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(BluetoothConnection.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    else {
+                        recvMsgTextView.setText(readMessage);
+                    }
                     //     mAdapter.notifyDataSetChanged();
                     //     messageList.add(new androidRecyclerView.Message(counter++, readMessage, mConnectedDeviceName));
                     break;

@@ -43,6 +43,10 @@ public class LectureDetailsActivity extends AppCompatActivity {
     private Button bShowOnMap;
     private Button bFollow;
     private Boolean following;
+    private Button bUser;
+
+    private TextView tvAddress;
+    private TextView tvDate;
 
     private Lecture lecture;
 
@@ -63,6 +67,10 @@ public class LectureDetailsActivity extends AppCompatActivity {
             }
         });
         bFollow = (Button) findViewById(R.id.activity_lecture_details_follow_button);
+        bUser = (Button) findViewById(R.id.activity_lecture_details_user_button);
+
+        tvAddress = (TextView) findViewById(R.id.activity_lecture_details_address);
+        tvDate = (TextView) findViewById(R.id.activity_lecture_details_date) ;
 
         FirebaseDatabase.getInstance().getReference("lectures").child(lectureId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -84,11 +92,18 @@ public class LectureDetailsActivity extends AppCompatActivity {
                         tvDescription.setText("<Lecture has no description");
                     }
 
+                    if (lecture.getAddress() != null) {
+                        tvAddress.setText(lecture.getAddress());
+                    }
+
+                    tvDate.setText(lecture.getDay() + "." + lecture.getMonth() + "." + lecture.getYear() + " ; " + lecture.getHour() + ":" + lecture.getMinute());
+
                     if (lecture.getPicture() != null) {
                         FirebaseStorage storage = FirebaseStorage.getInstance();
                         StorageReference ref = storage.getReference().child("images").child(lecture.getPicture());
 
-                        Glide.with(LectureDetailsActivity.this).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
+                        //LectureDetailsActivity.this
+                        Glide.with(getBaseContext()).using(new FirebaseImageLoader()).load(ref).into(ivPicture);
                         //Picasso.with(LectureDetailsActivity.this).load(lecture.getPicture()).into(ivPicture);
                     }
                     else {
@@ -168,6 +183,15 @@ public class LectureDetailsActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(LectureDetailsActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        bUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LectureDetailsActivity.this, UserDetailsActivity.class);
+                intent.putExtra(UserDetailsActivity.USER_ID_EXTRA, lecture.get_user());
+                startActivity(intent);
             }
         });
     }

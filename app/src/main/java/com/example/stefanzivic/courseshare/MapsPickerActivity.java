@@ -99,7 +99,7 @@ public class MapsPickerActivity extends FragmentActivity implements OnMapReadyCa
             Geocoder geocoder = new Geocoder(MapsPickerActivity.this, Locale.getDefault());
             try {
                 List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                selectedAddress = addresses.get(0).toString();
+                selectedAddress = addresses.get(0).getAddressLine(0);
 
             }
             catch (IOException e) {

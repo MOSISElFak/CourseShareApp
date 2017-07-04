@@ -79,6 +79,8 @@ public class LocationService extends Service {
                                         noti.flags |= Notification.FLAG_AUTO_CANCEL;
 
                                         notificationManager.notify(0, noti);
+
+                                        stopSelf();
                                         //PendingIntent pendingIntent = PendingIntent.getService(LocationService.this, 0, intent, PendingIntent.FLAG_ONE_SHOT);
 
 //                                        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(LocationService.this);
@@ -112,23 +114,23 @@ public class LocationService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             Log.d("GPS", "Location changed");
-            Toast.makeText(LocationService.this, "Location changed", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(LocationService.this, "Location changed", Toast.LENGTH_SHORT).show();
             setLastLocation(location);
         }
 
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-            Toast.makeText(LocationService.this, "Status changed for provider: " + provider + " " + status, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(LocationService.this, "Status changed for provider: " + provider + " " + status, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onProviderEnabled(String provider) {
-            Toast.makeText(LocationService.this, "Provider enabled: " + provider, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(LocationService.this, "Provider enabled: " + provider, Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-            Toast.makeText(LocationService.this, "Provider disabled: " + provider, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(LocationService.this, "Provider disabled: " + provider, Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -159,6 +161,7 @@ public class LocationService extends Service {
 
     @Override
     public void onCreate() {
+        Toast.makeText(getBaseContext(), "Location service started", Toast.LENGTH_SHORT).show();
         Log.e("GPS", "onCreate");
         initializeLocationManager();
         try {

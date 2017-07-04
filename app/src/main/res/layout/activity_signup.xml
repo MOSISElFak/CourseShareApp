@@ -102,14 +102,15 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/signup_button"
-            android:text="Sign up"/>
+            android:id="@+id/login_button"
+            android:text="Login"/>
         <Button
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="match_parent"
-            android:id="@+id/login_button"
-            android:text="Login"/>
+            android:id="@+id/signup_button"
+            android:text="Sign up"/>
+
     </LinearLayout>
 
 

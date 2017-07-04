@@ -29,7 +29,8 @@
                     <Button
                         android:id="@+id/activity_create_lecture_picture_button"
                         android:layout_width="180dp"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                        android:text="Choose picture"/>
                 </LinearLayout>
 
                 <LinearLayout

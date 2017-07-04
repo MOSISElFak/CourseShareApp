@@ -22,4 +22,10 @@
         android:title="Connect via bluetooth"
         app:showAsAction="never" />
 
+    <item
+        android:id="@+id/action_start_location"
+        android:orderInCategory="100"
+        android:title="Start location service"
+        app:showAsAction="never" />
+
 </menu>

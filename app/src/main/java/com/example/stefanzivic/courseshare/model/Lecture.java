@@ -20,7 +20,7 @@ public class Lecture {
 
     private String picture;
 
-    private Boolean running;
+    //private Boolean running;
     private Boolean past;
 
     private String address;
@@ -30,7 +30,7 @@ public class Lecture {
     private String _user;
     //private Map<String, Boolean> _studentsPending = new HashMap<>();
     //private Map<String, Boolean> _studentsApproved = new HashMap<>();
-    private Map<String, Boolean> _studentsAttending = new HashMap<>();
+    //private Map<String, Boolean> _studentsAttending = new HashMap<>();
 
 
 
@@ -85,21 +85,21 @@ public class Lecture {
 //        this._studentsApproved = _studentsApproved;
 //    }
 
-    public Boolean getRunning() {
-        return running;
-    }
+//    public Boolean getRunning() {
+//        return running;
+//    }
+//
+//    public void setRunning(Boolean running) {
+//        this.running = running;
+//    }
 
-    public void setRunning(Boolean running) {
-        this.running = running;
-    }
-
-    public Map<String, Boolean> get_studentsAttending() {
-        return _studentsAttending;
-    }
-
-    public void set_studentsAttending(Map<String, Boolean> _studentsAttending) {
-        this._studentsAttending = _studentsAttending;
-    }
+//    public Map<String, Boolean> get_studentsAttending() {
+//        return _studentsAttending;
+//    }
+//
+//    public void set_studentsAttending(Map<String, Boolean> _studentsAttending) {
+//        this._studentsAttending = _studentsAttending;
+//    }
 
     public String getId() {
         return id;

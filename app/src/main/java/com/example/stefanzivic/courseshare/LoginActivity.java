@@ -64,10 +64,10 @@ public class LoginActivity extends AppCompatActivity {
             }
         };
 
-//        if(mAuth.getCurrentUser()!=null) {
-//            Intent intent = new Intent(this,MainActivity.class);
-//            startActivity(intent);
-//        }
+        if(mAuth.getCurrentUser()!=null) {
+            Intent intent = new Intent(this,MainActivity.class);
+            startActivity(intent);
+        }
     }
 
 
