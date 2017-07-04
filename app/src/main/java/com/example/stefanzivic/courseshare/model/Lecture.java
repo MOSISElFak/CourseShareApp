@@ -16,7 +16,8 @@ public class Lecture {
     private String picture;
 
     private Boolean running;
-
+    private double lat;
+    private double lng;
 
     private String _user;
     private Map<String, Boolean> _studentsPending = new HashMap<>();
@@ -106,5 +107,21 @@ public class Lecture {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
     }
 }

@@ -1,8 +1,10 @@
 package com.example.stefanzivic.courseshare.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -11,16 +13,21 @@ import android.widget.Toast;
 import com.amulyakhare.textdrawable.TextDrawable;
 //import com.bumptech.glide.Glide;
 import com.bumptech.glide.Glide;
+import com.example.stefanzivic.courseshare.MapsActivity;
 import com.example.stefanzivic.courseshare.R;
 import com.example.stefanzivic.courseshare.model.Lecture;
 //import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.firebase.ui.storage.images.FirebaseImageLoader;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 public class LectureDetailsActivity extends AppCompatActivity {
 
@@ -31,6 +38,7 @@ public class LectureDetailsActivity extends AppCompatActivity {
     private TextView tvName;
     private TextView tvDescription;
     private Button bViewTrainer;
+    private Button bShowOnMap;
 
     private Lecture lecture;
 
@@ -42,8 +50,14 @@ public class LectureDetailsActivity extends AppCompatActivity {
         tvName = (TextView) findViewById(R.id.activity_lecture_details_name);
         tvDescription = (TextView) findViewById(R.id.activity_lecture_details_description);
         ivPicture = (ImageView) findViewById(R.id.activity_lecture_details_picture);
-
+        bShowOnMap = (Button)findViewById(R.id.activity_lecture_details_show_on_map_button) ;
         lectureId = getIntent().getStringExtra(LECTURE_ID_EXTRA);
+        bShowOnMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLectureOnMap();
+            }
+        });
 
         FirebaseDatabase.getInstance().getReference("lectures").child(lectureId).addValueEventListener(new ValueEventListener() {
             @Override
@@ -92,5 +106,13 @@ public class LectureDetailsActivity extends AppCompatActivity {
                 Toast.makeText(LectureDetailsActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void showLectureOnMap() {
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add(lectureId);
+        Intent intent = new Intent(LectureDetailsActivity.this, MapsActivity.class);
+        intent.putExtra(MapsActivity.LECTURE_ARRAY_EXTRA, arrayList);
+        startActivity(intent);
     }
 }
